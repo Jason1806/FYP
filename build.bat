@@ -10,28 +10,48 @@ if not exist "venv" (
 REM Activate virtual environment
 call venv\Scripts\activate.bat
 
-REM Install dependencies
-echo Installing dependencies...
-pip install -r requirements.txt
+REM Upgrade pip first
+echo Upgrading pip...
+python -m pip install --upgrade pip
+
+REM Install setuptools and wheel first to avoid build issues
+echo Installing build tools...
+pip install setuptools wheel
+
+REM Install core dependencies first
+echo Installing core dependencies...
+pip install click rich colorama pyfiglet jinja2 python-nmap requests beautifulsoup4 dnspython cryptography
+
+REM Install data science dependencies
+echo Installing data science dependencies...
+pip install numpy pandas scikit-learn matplotlib
+
+REM Install ML dependencies (optional)
+echo Installing AI/ML dependencies (optional)...
+pip install tensorflow nltk || echo Warning: TensorFlow or NLTK installation failed - AI features may be limited
+
+REM Install PyInstaller for building executable
+echo Installing PyInstaller...
+pip install pyinstaller
 
 REM Download NLTK data
 echo Downloading NLTK data...
-python -c "import nltk; nltk.download('punkt', quiet=True); nltk.download('stopwords', quiet=True); nltk.download('wordnet', quiet=True)"
+python -c "try: import nltk; nltk.download('punkt', quiet=True); nltk.download('stopwords', quiet=True); nltk.download('wordnet', quiet=True); print('NLTK data downloaded successfully'); except ImportError: print('NLTK not available - skipping data download'); except Exception as e: print(f'NLTK data download failed: {e}')"
 
 REM Run tests
 echo Running basic functionality test...
-python -c "from pentestool.main import main; print('Import successful!')"
+python -c "try: from pentestool.main import main; print('✅ Main function import successful!'); except Exception as e: print(f'❌ Import failed: {e}'); exit(1)"
 
 REM Build executable
 echo Building executable with PyInstaller...
-pyinstaller pentestool.spec
+pyinstaller pentestool.spec --noconfirm
 
 REM Check if build was successful
 if exist "dist\PenTestTool.exe" (
-    echo Build successful! Executable created at dist\PenTestTool.exe
+    echo ✅ Build successful! Executable created at dist\PenTestTool.exe
     echo You can run the tool with: dist\PenTestTool.exe --help
 ) else (
-    echo Build failed. Please check the error messages above.
+    echo ❌ Build failed. Please check the error messages above.
 )
 
 echo Done!
