@@ -131,19 +131,55 @@ The tool uses a configuration file located at `~/.pentestool/config.json`. Key s
 
 ## 🏗️ Building Executable
 
-To create a standalone executable:
+To create a standalone executable, use the provided build scripts:
 
-1. **Install PyInstaller**:
+### **Automated Build (Recommended)**
+
+**Linux/macOS:**
 ```bash
-pip install pyinstaller
+./build.sh
 ```
 
-2. **Build the executable**:
-```bash
-pyinstaller pentestool.spec
+**Windows:**
+```batch
+build.bat
 ```
 
-The executable will be created in the `dist/` directory.
+These scripts will:
+- Create a virtual environment
+- Install all dependencies with Python 3.12 compatibility
+- Handle build tool setup automatically
+- Generate the executable in `dist/` directory
+
+### **Manual Build**
+
+If you prefer manual control:
+
+1. **Create and activate virtual environment**:
+```bash
+python -m venv venv
+source venv/bin/activate  # Linux/Mac
+# OR
+venv\Scripts\activate     # Windows
+```
+
+2. **Install dependencies**:
+```bash
+pip install --upgrade pip setuptools wheel
+pip install -r requirements.txt
+```
+
+3. **Build executable**:
+```bash
+pyinstaller pentestool.spec --noconfirm
+```
+
+The executable will be created in the `dist/` directory as `PenTestTool` (Linux/Mac) or `PenTestTool.exe` (Windows).
+
+### **Build Notes**
+- The build process gracefully handles missing optional dependencies (AI/ML libraries)
+- Core functionality (network scanning, web testing, reporting) works even without AI features
+- AI analysis requires NumPy, TensorFlow, and scikit-learn
 
 ## 📁 Project Structure
 
